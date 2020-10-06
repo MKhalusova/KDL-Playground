@@ -1,16 +1,18 @@
+import api.core.SavingFormat
+import api.core.Sequential
+import api.core.activation.Activations
+import api.core.initializer.HeNormal
+import api.core.initializer.Zeros
+import api.core.layer.Dense
+import api.core.layer.Flatten
+import api.core.layer.Input
+import api.core.loss.LossFunctions
+import api.core.metric.Metrics
+import api.core.optimizer.SGD
 import datasets.Dataset
 import datasets.handlers.extractImages
 import datasets.handlers.extractLabels
-import api.keras.Sequential
-import api.keras.activations.Activations
-import api.keras.initializers.HeNormal
-import api.keras.initializers.Zeros
-import api.keras.layers.Dense
-import api.keras.layers.Input
-import api.keras.layers.Flatten
-import api.keras.optimizers.SGD
-import api.keras.loss.LossFunctions
-import api.keras.metric.Metrics
+import java.io.File
 
 private val SEED = 42L
 
@@ -37,11 +39,11 @@ fun main() {
     model.compile(SGD(), LossFunctions.SOFT_MAX_CROSS_ENTROPY_WITH_LOGITS, Metrics.ACCURACY)
     model.summary()
 
-    model.fit(dataset = train, epochs = 30, batchSize = 100, verbose = true)
+    model.fit(dataset = newTrain, epochs = 30, batchSize = 100, verbose = true)
 
-    val accuracy = model.evaluate(dataset = test, batchSize = 100).metrics[Metrics.ACCURACY]
+    val accuracy = model.evaluate(dataset = validation, batchSize = 100).metrics[Metrics.ACCURACY]
 
-    model.save("src/model/my_saved_model")
+    model.save(File("src/model/my_model"))
     model.close()
 
 

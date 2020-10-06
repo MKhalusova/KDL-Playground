@@ -14,9 +14,8 @@ repositories {
 
 dependencies {
     implementation("com.beust:klaxon:5.0.1")
-    implementation ("org.jetbrains.kotlin.kotlin-dl:api:0.0.5")
+    implementation ("org.jetbrains.kotlin.kotlin-dl:api:0.0.8")
     testImplementation(kotlin("test-junit"))
-    implementation(kotlin("script-runtime"))
 }
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
