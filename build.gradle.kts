@@ -13,9 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.beust:klaxon:5.0.1")
-    implementation ("org.jetbrains.kotlin.kotlin-dl:api:0.0.8")
-    testImplementation(kotlin("test-junit"))
+    implementation ("org.jetbrains.kotlin-deeplearning:api:0.0.14")
 }
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"

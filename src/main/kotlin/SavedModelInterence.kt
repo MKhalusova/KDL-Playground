@@ -1,39 +1,36 @@
-import api.inference.InferenceModel
-import org.tensorflow.Tensor
-import sun.awt.resources.awt
-import java.awt.image.BufferedImage
+import org.jetbrains.kotlinx.dl.api.inference.InferenceModel
+import org.jetbrains.kotlinx.dl.datasets.image.ImageConverter
 import java.io.File
-import javax.imageio.ImageIO
-import javax.swing.Spring.height
 
+val PATH_TO_MODEL = "src/model/my_model"
+val PATH_TO_TEST_IMAGE = "src/main/resources/testing-resources/test-image-bag.png"
+val stringLabels = mapOf(0 to "T-shirt/top",
+        1 to "Trouser",
+        2 to "Pullover",
+        3 to "Dress",
+        4 to "Coat",
+        5 to "Sandal",
+        6 to "Shirt",
+        7 to "Sneaker",
+        8 to "Bag",
+        9 to "Ankle boot"
+)
 
-val PATH_TO_MODEL = "src/model/my_saved_model"
-val image = ImageIO.read(File("/Users/mariakhalusova/Code/KDL-Playground/src/main/resources/testing-resources/test-image.png"))
+val floatArray = ImageConverter.toRawFloatArray(File(PATH_TO_TEST_IMAGE))
 
-val imageData = image.getData()
-
-private fun reshape(floats: FloatArray): Tensor<*> {
+fun reshapeInput(inputData: FloatArray): Array<Array<FloatArray>> {
     val reshaped = Array(
-        1
+            1
     ) { Array(28) { FloatArray(28) } }
-    for (i in floats.indices) reshaped[0][i / 28][i % 28] = floats[i]
-    return Tensor.create(reshaped)
+    for (i in inputData.indices) reshaped[0][i / 28][i % 28] = inputData[i]
+    return reshaped
 }
 
-
 fun main() {
-
-    val pixels = IntArray(imageData.width * imageData.height)
-    val ar = imageData.let {
-        it.getPixels(0, 0, it.width, it.height, pixels)
-    }
-    val flarr: FloatArray = ar.map{it.toFloat()}.toFloatArray()
-    //I'd love to be able to have Keras style image pre-processing functionality, e.g. image as array https://www.tensorflow.org/api_docs/python/tf/keras/preprocessing/image/load_img
-
-    InferenceModel().use {
-        it.reshape(::reshape)
-        it.loadWeights(File("src/model/my_model"))
-        println(it.predict(flarr))
+    InferenceModel.load(File(PATH_TO_MODEL)).use {
+        it.reshape(::reshapeInput)
+        val prediction = it.predict(floatArray)
+        println("Predicted label is: $prediction. This corresponds to class ${stringLabels[prediction]}.")
     }
 
 }
